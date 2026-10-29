@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SmartClass Live Pro — Вставка видео и аудио в HTML</title>
+<style>
+:root{--ac:#2563eb;--g:#059669;--vi:#7c3aed;--tx:#14213d;--mu:#4a5b78;--bd:#d3deef;--bg:#f4f8ff;--card-bg:#ffffff}
+[data-theme="dark"]{--ac:#3b82f6;--g:#10b981;--vi:#a855f7;--tx:#f1f5f9;--mu:#94a3b8;--bd:#334155;--bg:#0f172a;--card-bg:#1e293b}
+*{box-sizing:border-box}
+body{margin:0;font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--tx);background:var(--bg);min-height:100vh}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+header{position:sticky;top:0;z-index:5;background:var(--card-bg);border-bottom:1px solid var(--bd);display:flex;gap:8px;align-items:center;padding:10px 14px;flex-wrap:wrap}
+.logo{font-weight:700;font-size:20px;color:var(--ac);flex:1}.logo b{color:var(--g)}
+.ctrl-btn{padding:8px 10px;border:1.5px solid var(--bd);background:var(--card-bg);font-size:14px;cursor:pointer;color:var(--mu);border-radius:8px;font-weight:600}
+.role-btn{padding:8px 12px;border:1.5px solid var(--ac);background:var(--card-bg);color:var(--ac);font-weight:700;border-radius:8px;cursor:pointer}
+.role-btn.active{background:var(--ac);color:#fff}
+.lang button{padding:6px 10px;border:1.5px solid var(--bd);background:var(--card-bg);font-size:14px;cursor:pointer;color:var(--mu)}
+.lang button:first-child{border-radius:6px 0 0 6px}.lang button:last-child{border-radius:0 6px 6px 0}
+.lang button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+nav{display:flex;gap:6px;overflow-x:auto;max-width:1050px;margin:14px auto 0;padding:0 14px;-webkit-overflow-scrolling:touch}
+nav::-webkit-scrollbar{display:none}
+nav button{border:1px solid var(--bd);border-radius:999px;background:var(--card-bg);padding:8px 16px;font-size:16px;color:var(--mu);cursor:pointer;white-space:nowrap}
+nav button.on{background:linear-gradient(135deg,var(--ac),var(--vi));color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(37,99,235,.3)}
+main{max-width:1050px;margin:12px auto 50px;padding:0 14px}
+.panel{position:relative;background:var(--card-bg);border:1px solid var(--bd);border-radius:14px;padding:50px 16px 20px;box-shadow:0 8px 30px rgba(37,99,235,.1)}
+.panel:before{content:"";position:absolute;left:16px;top:16px;width:10px;height:10px;border-radius:50%;background:#ff5f57;box-shadow:16px 0 #febc2e,32px 0 #28c840}
+.panel:after{content:"~/smart/html5_media.sh";position:absolute;left:0;right:0;top:0;height:40px;line-height:40px;padding-left:80px;border-bottom:1px solid var(--bd);font:12px ui-monospace,Menlo,monospace;color:var(--mu)}
+.hero{padding:14px 16px;border-radius:12px;background:linear-gradient(135deg,rgba(37,99,235,.1),rgba(124,58,237,.1));border:1px solid var(--bd);margin-bottom:14px}
+.hero h1{margin:4px 0;font-size:clamp(20px,4vw,30px);line-height:1.2;color:var(--ac)}
+.mu{color:var(--mu);font-size:15px}
+h2{font-size:17px;letter-spacing:.05em;text-transform:uppercase;color:var(--vi);margin:22px 0 8px}h2:before{content:"> ";color:var(--g)}
+.goals{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.goal,.card{display:flex;gap:10px;padding:12px;border-radius:10px;border:1px solid var(--bd);background:var(--card-bg)}
+.card{display:block;margin:10px 0}.goal b{font-size:22px;color:var(--ac)}
+.bar{height:10px;background:var(--bd);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--vi),var(--g));transition:width .4s}
+.t{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--bd);cursor:pointer;align-items:center}
+.t input{width:22px;height:22px;accent-color:var(--g);flex:none}
+input[type=text],textarea,select,input[type=number]{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--bd);border-radius:8px;background:var(--card-bg);color:var(--tx)}
+textarea{min-height:80px;font-family:inherit}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--ac)}
+label{display:block;margin:12px 0 4px;font-weight:600;font-size:15px;color:var(--ac)}
+.btn{background:linear-gradient(135deg,var(--ac),var(--vi));color:#fff;border:0;border-radius:8px;padding:10px 18px;font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block;margin:4px 4px 4px 0}
+.btn.g{background:linear-gradient(135deg,var(--g),var(--ac))}
+.btn.s{background:var(--card-bg);color:var(--tx);border:1.5px solid var(--bd)}
+.btn.d{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
+.opt{display:flex;gap:10px;align-items:center;width:100%;text-align:left;font:inherit;font-size:16px;border:1.5px solid var(--bd);background:var(--card-bg);border-radius:8px;padding:11px 13px;margin:5px 0;cursor:pointer;color:var(--tx)}
+.opt.sel{border-color:var(--ac);background:rgba(37,99,235,.12);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+.ok{border-left:4px solid var(--g);padding:8px 12px;background:rgba(5,150,105,.12);border-radius:0 8px 8px 0;margin:8px 0}
+.warn{border-left:4px solid #f59e0b;padding:8px 12px;background:rgba(245,158,11,.12);border-radius:0 8px 8px 0}
+.lecture-content h3{color:var(--ac);margin-top:16px;font-size:19px}
+.lecture-content code{background:var(--bd);padding:2px 5px;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:15px}
+.lecture-content pre{background:#1e293b;color:#f8fafc;padding:12px;border-radius:8px;overflow-x:auto;font-family:ui-monospace,Menlo,monospace;font-size:15px}
+.embed-container{position:relative;width:100%;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin:10px 0;border:1px solid var(--bd)}
+.embed-container iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+.media-box{background:var(--bg);padding:12px;border:1.5px solid var(--bd);border-radius:8px;margin:10px 0}
+.score-badge{background:rgba(37,99,235,.15);color:var(--ac);padding:5px 10px;border-radius:6px;font-size:14px;font-weight:700;display:inline-block}
+
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:center;justify-content:center;padding:14px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card-bg);border:1px solid var(--bd);border-radius:14px;padding:20px;max-width:480px;width:100%;box-shadow:0 15px 40px rgba(0,0,0,.3);max-height:85vh;overflow-y:auto;text-align:center}
+.modal h3{margin:0 0 12px;color:var(--ac);text-align:left}
+.history-item{padding:6px 0;border-bottom:1px dashed var(--bd);display:flex;flex-direction:column;gap:2px;font-size:14px;text-align:left}
+.history-item:last-child{border-bottom:none}
+.live-badge{background:rgba(5,150,105,.15);color:var(--g);padding:5px 10px;border-radius:6px;font-size:14px;font-weight:700;display:inline-block}
+#qrcode canvas, #qrcode img { margin: 0 auto; display: block; border-radius: 8px; }
+footer{text-align:center;padding:16px;font-size:14px;color:var(--mu);border-top:1px solid var(--bd);margin-top:20px}
+</style>
+
+<!-- Автономный генератор QR-кодов без внешних API -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<header>
+  <span class="logo mono">&lt;<b>Smart</b>Class/&gt;</span>
+  <div style="display:flex;gap:4px">
+    <button class="role-btn active" id="role-student" onclick="switchRole('student')">🎓 Студент</button>
+    <button class="role-btn" id="role-curator" onclick="switchRole('curator')">👨‍🏫 Куратор</button>
+  </div>
+  <button class="ctrl-btn mono" id="timer-btn" title="Таймер">⏱ <span id="timer-txt">45:00</span></button>
+  <button class="ctrl-btn" id="qr-btn" title="QR-код">📱 QR</button>
+  <button class="ctrl-btn" id="history-btn" title="История">📜</button>
+  <button class="ctrl-btn" id="theme-btn">🌙</button>
+  <span class="score-badge" id="score-badge">⭐ 0/100</span>
+  <span class="live-badge" id="online-badge">🟢 0</span>
+  <span class="lang"><button data-l="ru" class="on">РУС</button><button data-l="kk">ҚАЗ</button></span>
+</header>
+
+<nav id="nav"></nav>
+<main><div class="panel" id="v"></div></main>
+
+<footer>
+  Разработано: <b>Сүйіндік Талант Қырғызбекұлы</b> | SmartClass Live Pro
+</footer>
+
+<!-- Модальное окно QR-кода -->
+<div class="modal-overlay" id="qr-modal">
+  <div class="modal">
+    <h3>📱 Автономный QR-код урока</h3>
+    <p class="mu">Отсканируйте камерой смартфона для входа:</p>
+    <div style="margin:16px auto;background:#fff;padding:16px;display:inline-block;border-radius:12px;border:1px solid var(--bd)" id="qrcode"></div>
+    <p style="font-size:13px;word-break:break-all;color:var(--mu);margin-bottom:12px" id="qr-url-txt"></p>
+    <button class="btn g" onclick="copyLink()" style="width:100%;font-size:14px">📋 Скопировать ссылку</button>
+    <button class="btn s" onclick="closeQrModal()" style="width:100%;margin-top:6px">Закрыть</button>
+  </div>
+</div>
+
+<!-- Модальное окно истории -->
+<div class="modal-overlay" id="history-modal">
+  <div class="modal" style="text-align:left">
+    <h3>📜 История действий</h3>
+    <div id="modal-history-list"><span class="mu">Записей пока нет</span></div>
+    <div style="margin-top:16px;text-align:right">
+      <button class="btn s" onclick="closeHistoryModal()">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно таймера -->
+<div class="modal-overlay" id="timer-modal">
+  <div class="modal" style="text-align:left">
+    <h3>⏱ Таймер урока</h3>
+    <label>Задать время (в минутах):</label>
+    <input type="number" id="timer-input" value="10" min="1" max="180">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px">
+      <button class="btn g" id="timer-start-btn">▶ Старт</button>
+      <button class="btn d" id="timer-stop-btn">⏸ Пауза</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:6px">
+      <button class="btn s" id="timer-reset-btn" style="flex:1">🔄 Сброс</button>
+      <button class="btn s" onclick="closeTimerModal()" style="flex:1">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var currentRole = "student";
+var userName = "";
+var historyLog = [];
+var timerInterval = null;
+var remainingSeconds = 45 * 60;
+var isTimerRunning = false;
+var qrObj = null;
+
+var LESSON = {
+  ru: {
+    topic: "Тема: Вставка видео и аудио в документ HTML",
+    mainGoal: "Главная цель: Научиться встраивать мультимедиа контент (аудио, видео, ролики с YouTube) в веб-страницы.",
+    goals: [
+      "Изучить нативные теги <video> и <audio>",
+      "Освоить атрибуты плееров (controls, poster, autoplay)",
+      "Научиться встраивать видео с YouTube через тег <iframe>"
+    ],
+    tasks: [
+      "Изучить лекционный материал по мультимедиа (макс. 20 баллов)",
+      "Выполнить практические задания по вставке тегов (макс. 40 баллов)",
+      "Пройти итоговый проверочный тест (макс. 40 баллов)"
+    ],
+    homework: [
+      "Создать HTML-страницу с видеороликом и аудиоплеером",
+      "Добавить атрибут poster для картинки-заставки видео"
+    ],
+    lecture: `
+      <h3>1. Введение в мультимедиа HTML5</h3>
+      <p>В современной веб-разработке для добавления аудио и видео используются нативные теги <code>&lt;video&gt;</code> и <code>&lt;audio&gt;</code>.</p>
+      
+      <h3>2. Вставка видео (&lt;video&gt;)</h3>
+      <p>Тег <code>&lt;video&gt;</code> воспроизводит видеофайлы. Обязательный атрибут <code>controls</code> включает панель управления.</p>
+      <pre><code>&lt;video controls width="100%" poster="preview.jpg"&gt;
+    &lt;source src="video.mp4" type="video/mp4"&gt;
+    Ваш браузер не поддерживает видео.
+&lt;/video&gt;</code></pre>
+
+      <div class="media-box">
+        <b>🎬 Демонстрация HTML5 Видеоплеера:</b><br><br>
+        <video controls width="100%" poster="https://via.placeholder.com/600x300/2563eb/ffffff?text=HTML5+Video">
+          <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+        </video>
+      </div>
+
+      <h3>3. Вставка аудио (&lt;audio&gt;)</h3>
+      <p>Для воспроизведения звука или музыки применяется тег <code>&lt;audio&gt;</code>.</p>
+      <pre><code>&lt;audio controls&gt;
+    &lt;source src="audio.mp3" type="audio/mpeg"&gt;
+&lt;/audio&gt;</code></pre>
+
+      <div class="media-box">
+        <b>🎵 Демонстрация HTML5 Аудиоплеера:</b><br><br>
+        <audio controls style="width:100%">
+          <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+
+      <h3>4. Встраивание видео с YouTube (&lt;iframe&gt;)</h3>
+      <p>Для ролика с YouTube используется тег <code>&lt;iframe&gt;</code>:</p>
+      <pre><code>&lt;iframe width="100%" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen&gt;&lt;/iframe&gt;</code></pre>
+
+      <div class="embed-container">
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+      </div>
+    `,
+    practice: [
+      { 
+        q: "Задание 1: Напишите код для вставки видео с панелью управления (controls) и заставкой poster (20 баллов)", 
+        hint: "Используйте <video controls poster='img.jpg'>", 
+        code: "<video controls width=\"100%\" poster=\"img.jpg\">\n    <source src=\"video.mp4\" type=\"video/mp4\">\n</video>" 
+      },
+      { 
+        q: "Задание 2: Вставьте аудиоплеер с поддержкой формата MP3 (20 баллов)", 
+        hint: "Используйте <audio controls>", 
+        code: "<audio controls>\n    <source src=\"audio.mp3\" type=\"audio/mpeg\">\n</audio>" 
+      }
+    ],
+    glossary: [
+      { term: "<video>", def: "HTML5 тег для воспроизведения видеофайлов." },
+      { term: "<audio>", def: "HTML5 тег для воспроизведения звуковых файлов." },
+      { term: "controls", def: "Атрибут, включающий кнопки управления (старт/пауза, громкость)." },
+      { term: "poster", def: "Атрибут видео для задания картинки-заставки до начала воспроизведения." },
+      { term: "<iframe>", def: "Тег для встраивания внешних страниц и видеороликов с YouTube." }
+    ],
+    quiz: [
+      ["Какой атрибут обязательно нужен тегу <video>, чтобы появилась панель управления? (15 баллов)", [["controls", 0], ["autoplay", 1], ["poster", 2]], 0],
+      ["Какой атрибут устанавливает обложку (картинку-заставку) для видео? (15 баллов)", [["poster", 0], ["cover", 1], ["preview", 2]], 0],
+      ["Какой тег используется для вставки видео с YouTube? (10 баллов)", [["<iframe>", 0], ["<video>", 1], ["<embed>", 2]], 0]
+    ],
+    reflectPrompt: "Поделитесь, насколько понятна вам тема вставки видео и аудио в HTML:"
+  },
+  kk: {
+    topic: "Тақырып: HTML құжатына видео мен аудио кірістіру",
+    mainGoal: "Негізгі мақсат: Веб-беттерге видео, аудио және YouTube роликтерін қосуды үйрену.",
+    goals: ["<video> және <audio> тегтерін меңгеру", "controls, poster атрибуттарын қолдану"],
+    tasks: ["Дәрісті оқу (20 балл)", "Практиканы орындау (40 балл)", "Тест тапсыру (40 балл)"],
+    homework: ["Видео пен аудиосы бар бет жасау"],
+    lecture: `<h3>1. Мультимедиа элементтері</h3><p>HTML5 стандартында дыбыс пен видео қосу үшін <code>&lt;video&gt;</code> және <code>&lt;audio&gt;</code> тегтері қолданылады.</p>`,
+    practice: [{ q: "1-тапсырма (40 балл)", hint: "<video controls> тегін қолданыңыз", code: "<video controls><source src=\"video.mp4\"></video>" }],
+    glossary: [{ term: "<video>", def: "Видео ойнату тегі." }],
+    quiz: [["Видео басқару панелі атрибуты? (40 балл)", [["controls", 0], ["autoplay", 1]], 0]],
+    reflectPrompt: "Сабақ бойынша пікіріңізді жазыңыз:"
+  }
+};
+
+var T = {
+  ru:{lesson:"Урок",lecture:"📖 Лекция",practice:"💻 Практика",glossary:"📚 Глоссарий",test:"Тест",reflect:"Рефлексия",send:"Отправить",goals:"Цели урока",tasks:"Задачи",hw:"Домашнее задание",join:"👋 Введите своё имя, чтобы войти на урок:",name:"Ваше имя",here:"Войти на урок",joined:"Вы авторизованы как",prog:"Выполнено",need:"Сначала введите ваше имя.",q:"Вопрос",fin:"Отправить",sure:"Отправить?",done:"✅ Принято."},
+  kk:{lesson:"Сабақ",lecture:"📖 Дәріс",practice:"💻 Тәжірибе",glossary:"📚 Терминдер",test:"Тест",reflect:"Рефлексия",send:"Жіберу",goals:"Мақсаттар",tasks:"Тапсырмалар",hw:"Үй жұмысы",join:"👋 Атыңызды енгізіңіз:",name:"Атыңыз",here:"Кіру",joined:"Сіз:",prog:"Орындалды",need:"Атыңызды енгізіңіз.",q:"Сұрақ",fin:"Жіберу",sure:"Жіберу керек пе?",done:"✅ Қабылданды."}
+};
+
+var L = "ru", tab = "lesson", S = {done:[], hwDone:[], ans:{}, sub:false, r:{}, prAnswer:{}};
+
+function $(s) { return document.querySelector(s); }
+function t(k) { return T[L][k] || k; }
+function esc(s) { return String(s || "").replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function cur() { return LESSON[L]; }
+function tk() { return cur().tasks || []; }
+function hwk() { return cur().homework || []; }
+
+function calculateTotalScore() {
+  let score = 0;
+  var totalTasks = tk().length;
+  if(totalTasks > 0) score += Math.round((S.done.length / totalTasks) * 20);
+  var totalHw = hwk().length;
+  if(totalHw > 0) score += Math.round(((S.hwDone || []).length / totalHw) * 20);
+  if(S.sub) {
+    var quiz = cur().quiz || [];
+    var correctCount = 0;
+    for(var i=0; i<quiz.length; i++) {
+      if(S.ans[i] === quiz[i][2]) correctCount++;
+    }
+    if(quiz.length > 0) score += Math.round((correctCount / quiz.length) * 40);
+  }
+  if(Object.keys(S.prAnswer).length > 0) score += 20;
+  return Math.min(score, 100);
+}
+
+function updateScoreBadge() {
+  $("#score-badge").textContent = "⭐ " + calculateTotalScore() + "/100";
+}
+
+function switchRole(role) {
+  currentRole = role;
+  $("#role-student").classList.toggle("active", role === "student");
+  $("#role-curator").classList.toggle("active", role === "curator");
+  tab = role === "student" ? "lesson" : "curator_edit";
+  render();
+}
+
+function lessonV() {
+  var cl = cur(), p = tk().length ? Math.round(S.done.length / tk().length * 100) : 0;
+  var html = '<div class="hero"><div class="mono mu">$ lesson --media-html5</div><h1>' + esc(cl.topic) + '</h1><p><b>🎯 ' + esc(cl.mainGoal) + '</b></p></div>';
+  
+  if (userName) {
+    html += '<div class="ok">✅ ' + t("joined") + ': <b>' + esc(userName) + '</b> | Баллы: <b>' + calculateTotalScore() + '/100</b></div>';
+  } else {
+    html += '<div class="card" style="border:2px solid var(--ac)"><b>' + t("join") + '</b><div style="display:flex;gap:6px;margin-top:8px"><input type="text" id="nm" placeholder="' + t("name") + '"><button class="btn g" data-a="join">' + t("here") + '</button></div></div>';
+  }
+  
+  html += '<h2>' + t("goals") + '</h2><div class="goals">';
+  for(var i=0; i<(cl.goals||[]).length; i++) html += '<div class="goal"><b class="mono">0' + (i+1) + '</b><span>' + esc(cl.goals[i]) + '</span></div>';
+  html += '</div><h2>' + t("tasks") + '</h2><div class="bar"><i style="width:' + p + '%"></i></div>';
+  
+  for(var j=0; j<tk().length; j++) {
+    var checked = S.done.indexOf(j) !== -1 ? 'checked' : '';
+    html += '<label class="t"><input type="checkbox" data-a="chk" data-i="' + j + '" ' + checked + '><span>' + esc(tk()[j]) + '</span></label>';
+  }
+
+  html += '<h2>' + t("hw") + '</h2>';
+  for(var k=0; k<hwk().length; k++) {
+    var hwChecked = (S.hwDone || []).indexOf(k) !== -1 ? 'checked' : '';
+    html += '<label class="t" style="font-weight:400"><input type="checkbox" data-a="hwchk" data-i="' + k + '" ' + hwChecked + '><span>' + esc(hwk()[k]) + '</span></label>';
+  }
+  updateScoreBadge();
+  return html;
+}
+
+function lectureV() { return '<div class="hero"><h1>' + esc(cur().topic) + '</h1></div><div class="card lecture-content">' + (cur().lecture||"") + '</div>'; }
+
+function practiceV() {
+  var pr = cur().practice || [], html = '<div class="hero"><h1>💻 Практические задания</h1></div>';
+  if(!pr.length) return html + '<div class="card"><span class="mu">Заданий пока нет</span></div>';
+  for(var i=0; i<pr.length; i++) {
+    html += '<div class="card"><b>' + esc(pr[i].q) + '</b>';
+    if(pr[i].hint) html += '<p>💡 ' + esc(pr[i].hint) + '</p>';
+    html += '<textarea data-pri="' + i + '" placeholder="Впишите ваше решение...">' + esc(S.prAnswer[i]||"") + '</textarea>';
+    if(pr[i].code) html += '<details style="margin-top:8px"><summary style="cursor:pointer;color:var(--vi)">Пример кода</summary><pre><code>' + esc(pr[i].code) + '</code></pre></details>';
+    html += '</div>';
+  }
+  updateScoreBadge();
+  return html;
+}
+
+function glossaryV() {
+  var gl = cur().glossary || [], html = '<div class="hero"><h1>📚 Глоссарий</h1></div>';
+  if(!gl.length) return html + '<div class="card"><span class="mu">Пусто</span></div>';
+  for(var i=0; i<gl.length; i++) html += '<div class="card"><b style="color:var(--ac)">' + esc(gl[i].term) + '</b><p style="margin:4px 0 0">' + esc(gl[i].def) + '</p></div>';
+  return html;
+}
+
+function testV() {
+  if(!userName) return '<div class="warn">' + t("need") + '</div>';
+  var cl = cur();
+  if(S.sub) return '<div class="ok">🎉 Тест сдан! Итог: <b>' + calculateTotalScore() + '/100 баллов</b></div>';
+  var quiz = cl.quiz || [];
+  if(!quiz.length) return '<div class="card"><span class="mu">Тестов нет</span></div>';
+  
+  var html = '<div class="hero"><h1>❓ Проверка знаний</h1></div>';
+  for(var i=0; i<quiz.length; i++) {
+    html += '<div class="card"><b>' + (i+1) + '. ' + esc(quiz[i][0]) + '</b>';
+    for(var j=0; j<quiz[i][1].length; j++) {
+      var sel = S.ans[i] === j ? 'sel' : '';
+      html += '<button class="opt ' + sel + '" data-a="ans" data-i="' + i + '" data-j="' + j + '">' + esc(quiz[i][1][j][0]) + '</button>';
+    }
+    html += '</div>';
+  }
+  html += '<button class="btn g" data-a="sub">' + t("fin") + '</button>';
+  updateScoreBadge();
+  return html;
+}
+
+function reflV() {
+  if(!userName) return '<div class="warn">' + t("need") + '</div>';
+  return '<div class="card"><h3>Рефлексия</h3><textarea placeholder="Ваш отзыв..."></textarea><br><button class="btn g" onclick="alert(\'Спасибо за обратную связь!\')">' + t("send") + '</button></div>';
+}
+
+function curatorEditV() {
+  var cl = cur();
+  var html = '<div class="hero"><h1>⚙️ Студия куратора (' + L.toUpperCase() + ')</h1></div>';
+  html += '<div class="card"><label>Тема:</label><input type="text" id="ce-topic" value="' + esc(cl.topic) + '">';
+  html += '<label>Главная цель:</label><input type="text" id="ce-maingoal" value="' + esc(cl.mainGoal) + '">';
+  html += '<label>Задачи (с новой строки):</label><textarea id="ce-tasks">' + esc((cl.tasks||[]).join('\n')) + '</textarea>';
+  html += '<label>Домашка (с новой строки):</label><textarea id="ce-hw">' + esc((cl.homework||[]).join('\n')) + '</textarea>';
+  html += '<label>Лекция (HTML):</label><textarea id="ce-lecture" style="min-height:150px">' + esc(cl.lecture) + '</textarea>';
+  html += '<button class="btn g" onclick="saveAndSync()" style="width:100%;padding:12px;margin-top:10px">💾 Сохранить и синхронизировать</button></div>';
+  return html;
+}
+
+function render() {
+  var tabs = currentRole === "student" ? ["lesson","lecture","practice","glossary","test","reflect"] : ["lesson","lecture","practice","glossary","test","reflect","curator_edit"];
+  var navHtml = '';
+  for(var i=0; i<tabs.length; i++) {
+    var k = tabs[i];
+    navHtml += '<button data-tab="' + k + '" class="' + (k===tab ? "on" : "") + '">' + (k==="curator_edit"?"⚙️ Студия":t(k)) + '</button>';
+  }
+  $("#nav").innerHTML = navHtml;
+  
+  var views = {lesson:lessonV, lecture:lectureV, practice:practiceV, glossary:glossaryV, test:testV, reflect:reflV, curator_edit:curatorEditV};
+  $("#v").innerHTML = (views[tab] ? views[tab]() : '');
+}
+
+// Автономная генерация QR-кода прямо в браузере
+var qrModal = $("#qr-modal");
+$("#qr-btn").onclick = function() {
+  var currentUrl = window.location.href;
+  $("#qr-url-txt").textContent = currentUrl;
+  
+  var qrcodeContainer = $("#qrcode");
+  qrcodeContainer.innerHTML = ""; // очистка
+  
+  if (typeof QRCode !== "undefined") {
+    new QRCode(qrcodeContainer, {
+      text: currentUrl,
+      width: 180,
+      height: 180,
+      colorDark: "#2563eb",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  } else {
+    qrcodeContainer.innerHTML = "<p class='warn'>Не удалось загрузить скрипт QR</p>";
+  }
+  qrModal.classList.add("open");
+};
+
+function closeQrModal() { qrModal.classList.remove("open"); }
+
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(function() {
+    alert("Ссылка скопирована в буфер обмена!");
+  });
+}
+
+// Модальное окно истории
+var historyModal = $("#history-modal");
+$("#history-btn").onclick = function() {
+  var container = $("#modal-history-list");
+  if(!historyLog.length) container.innerHTML = '<span class="mu">Записей нет</span>';
+  else {
+    var html = '';
+    for(var i=historyLog.length-1; i>=0; i--) {
+      html += '<div class="history-item"><span>' + esc(historyLog[i].text) + '</span><span class="mono mu" style="font-size:12px">' + esc(historyLog[i].time) + '</span></div>';
+    }
+    container.innerHTML = html;
+  }
+  historyModal.classList.add("open");
+};
+function closeHistoryModal() { historyModal.classList.remove("open"); }
+
+// Модальное окно таймера
+var timerModal = $("#timer-modal");
+$("#timer-btn").onclick = function() { timerModal.classList.add("open"); };
+function closeTimerModal() { timerModal.classList.remove("open"); }
+
+function formatTime(sec) {
+  var m = Math.floor(sec / 60), s = sec % 60;
+  return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
+}
+
+$("#timer-start-btn").onclick = function() {
+  var m = parseInt($("#timer-input").value);
+  if(!isNaN(m) && m > 0) remainingSeconds = m * 60;
+  closeTimerModal();
+  var logText = "⏱ Таймер запущен на " + Math.ceil(remainingSeconds/60) + " мин.";
+  if(rdb) {
+    rdb.ref('smartclass/timer').set({ remainingSeconds: remainingSeconds, running: true });
+    rdb.ref('smartclass/content/history').set(historyLog.concat([{text: logText, time: new Date().toLocaleTimeString()}]));
+  } else {
+    if(timerInterval) clearInterval(timerInterval);
+    isTimerRunning = true;
+    timerInterval = setInterval(function() {
+      if(remainingSeconds > 0) { remainingSeconds--; $("#timer-txt").textContent = formatTime(remainingSeconds); }
+      else { clearInterval(timerInterval); isTimerRunning = false; }
+    }, 1000);
+    historyLog.push({text: logText, time: new Date().toLocaleTimeString()});
+  }
+};
+
+$("#timer-stop-btn").onclick = function() {
+  closeTimerModal();
+  if(rdb) rdb.ref('smartclass/timer').set({ remainingSeconds: remainingSeconds, running: false });
+  else { if(timerInterval) clearInterval(timerInterval); isTimerRunning = false; }
+};
+
+$("#timer-reset-btn").onclick = function() {
+  closeTimerModal();
+  remainingSeconds = 0;
+  $("#timer-txt").textContent = "00:00";
+  if(rdb) rdb.ref('smartclass/timer').set({ remainingSeconds: 0, running: false });
+  else { if(timerInterval) clearInterval(timerInterval); isTimerRunning = false; }
+};
+
+$("#theme-btn").onclick = function() {
+  var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+  $("#theme-btn").textContent = isDark ? "🌙" : "☀️";
+};
+
+document.addEventListener("click", function(e) {
+  var b = e.target.closest("button,input");
+  if(!b) return;
+  var d = b.dataset;
+  if(d.l) { L = d.l; render(); return; }
+  if(d.tab) { tab = d.tab; render(); return; }
+  if(d.a === "join") {
+    var n = $("#nm").value.trim();
+    if(n) { userName = n; render(); }
+    return;
+  }
+  if(d.a === "chk") {
+    var idx = +d.i, pos = S.done.indexOf(idx);
+    if(b.checked && pos === -1) S.done.push(idx);
+    else if(!b.checked && pos !== -1) S.done.splice(pos, 1);
+    render();
+    return;
+  }
+  if(d.a === "hwchk") {
+    var hIdx = +d.i;
+    if(!S.hwDone) S.hwDone = [];
+    var hPos = S.hwDone.indexOf(hIdx);
+    if(b.checked && hPos === -1) S.hwDone.push(hIdx);
+    else if(!b.checked && hPos !== -1) S.hwDone.splice(hPos, 1);
+    render();
+    return;
+  }
+  if(d.a === "ans") { S.ans[d.i] = +d.j; render(); return; }
+  if(d.a === "sub") { S.sub = true; render(); return; }
+});
+
+document.addEventListener("input", function(e) {
+  if(e.target.dataset.pri !== undefined) S.prAnswer[e.target.dataset.pri] = e.target.value;
+});
+
+// Firebase синхронизация
+var rdb = null;
+try {
+  firebase.initializeApp({ databaseURL: "https://smartclass-25a97-default-rtdb.firebaseio.com" });
+  rdb = firebase.database();
+  rdb.ref('smartclass/online_users').on('value', function(snap) {
+    $("#online-badge").textContent = "🟢 " + Object.keys(snap.val() || {}).length;
+  });
+  rdb.ref('smartclass/content').on('value', function(snap) {
+    var val = snap.val();
+    if(val) {
+      if(val.data) LESSON = val.data;
+      if(val.history) historyLog = val.history;
+      render();
+    }
+  });
+  rdb.ref('smartclass/timer').on('value', function(snap) {
+    var tData = snap.val();
+    if(tData) {
+      remainingSeconds = tData.remainingSeconds;
+      $("#timer-txt").textContent = formatTime(remainingSeconds);
+    }
+  });
+} catch(e) { console.log("Offline mode"); }
+
+function saveAndSync() {
+  LESSON[L].topic = $("#ce-topic").value;
+  LESSON[L].mainGoal = $("#ce-maingoal").value;
+  LESSON[L].goals = $("#ce-goals").value.split('\n').filter(Boolean);
+  LESSON[L].tasks = $("#ce-tasks").value.split('\n').filter(Boolean);
+  LESSON[L].homework = $("#ce-hw").value.split('\n').filter(Boolean);
+  LESSON[L].lecture = $("#ce-lecture").value;
+
+  var editorName = userName || (currentRole === "curator" ? "Куратор" : "Пользователь");
+  historyLog.push({ text: editorName + " обновил материалы", time: new Date().toLocaleTimeString() });
+
+  if(rdb) {
+    rdb.ref('smartclass/content').set({ data: LESSON, history: historyLog });
+    alert("✅ Сохранено и синхронизировано!");
+  } else {
+    alert("⚠️ Сохранено локально");
+    render();
+  }
+}
+
+render();
+</script>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+</body>
+</html>
